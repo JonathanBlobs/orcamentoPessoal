@@ -1,54 +1,45 @@
 class Despesa {
-  constructor(ano, mes, dia, tipo, descricao, valor) {
-    this.ano = ano
-    this.mes = mes
-    this.dia = dia
-    this.tipo = tipo
-    this.descricao = descricao
-    this.valor = valor
-  }
+	constructor(ano, mes, dia, tipo, descricao, valor) {
+		this.ano = ano
+		this.mes = mes
+		this.dia = dia
+		this.tipo = tipo
+		this.descricao = descricao
+		this.valor = valor
+	}
 
-  validarDados(){
-
-    for(let i in this){
-      
-    }
-
-  }
-
+	validarDados() {
+		for(let i in this) {
+			if(this[i] == undefined || this[i] == '' || this[i] == null) {
+				return false
+			}
+		}
+		return true
+	}
 }
 
 class Bd {
 
-  constructor() {
+	constructor() {
+		let id = localStorage.getItem('id')
 
-    let id = localStorage.getItem('id')
+		if(id === null) {
+			localStorage.setItem('id', 0)
+		}
+	}
 
-    if (id === null) {
+	getProximoId() {
+		let proximoId = localStorage.getItem('id')
+		return parseInt(proximoId) + 1
+	}
 
-      localStorage.setItem('id', 0)
+	gravar(d) {
+		let id = this.getProximoId()
 
-    }
+		localStorage.setItem(id, JSON.stringify(d))
 
-  }
-
-  getProximoId() {
-
-    let proximoId = localStorage.getItem('id')
-    return parseInt(proximoId) + 1
-
-  }
-
-  gravar(d) {
-
-    let id = this.getProximoId()
-
-    localStorage.setItem(id, JSON.stringify(d))
-
-    localStorage.setItem('id', id)
-
-  }
-
+		localStorage.setItem('id', id)
+	}
 }
 
 let bd = new Bd()
@@ -56,31 +47,28 @@ let bd = new Bd()
 
 function cadastrarDespesa() {
 
-  let ano = document.getElementById('ano')
-  let mes = document.getElementById('mes')
-  let dia = document.getElementById('dia')
+	let ano = document.getElementById('ano')
+	let mes = document.getElementById('mes')
+	let dia = document.getElementById('dia')
+	let tipo = document.getElementById('tipo')
+	let descricao = document.getElementById('descricao')
+	let valor = document.getElementById('valor')
 
-  let tipo = document.getElementById('tipo')
-  let descricao = document.getElementById('descricao')
-  let valor = document.getElementById('valor')
-
-  let despesa = new Despesa(
-    ano.value,
-    mes.value,
-    dia.value,
-    tipo.value,
-    descricao.value,
-    valor.value
-  )
-
-  if(despesa.validarDados()){
-
-  bd.gravar(despesa)
-
-  } else {
-
-
-  }  
-
+	let despesa = new Despesa(
+		ano.value, 
+		mes.value, 
+		dia.value, 
+		tipo.value, 
+		descricao.value,
+		valor.value
+	)
+	
+	if(despesa.validarDados()) {
+		bd.gravar(despesa)
+		//dialog de sucesso
+		$('#sucessoGravacao').modal('show') 
+	} else {
+		//dialog de sucesso
+		$('#erroGravacao').modal('show') 
+	}
 }
-
