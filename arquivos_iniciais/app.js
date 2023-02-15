@@ -9,8 +9,8 @@ class Despesa {
 	}
 
 	validarDados() {
-		for(let i in this) {
-			if(this[i] == undefined || this[i] == '' || this[i] == null) {
+		for (let i in this) {
+			if (this[i] == undefined || this[i] == '' || this[i] == null) {
 				return false
 			}
 		}
@@ -23,7 +23,7 @@ class Bd {
 	constructor() {
 		let id = localStorage.getItem('id')
 
-		if(id === null) {
+		if (id === null) {
 			localStorage.setItem('id', 0)
 		}
 	}
@@ -40,6 +40,29 @@ class Bd {
 
 		localStorage.setItem('id', id)
 	}
+
+	recuperarTodosRegistros() {
+
+		//array despesa
+		let despesas = array()
+
+		let id = localStorage.getItem('id')
+		//recuperar todas despesas em LS
+		for (let i = 1; i <= id; i++) {
+			// recuperar despesas
+			let despesa = JSON.parse(localStorage.getItem(i))
+
+			//Pular indice removido
+			if (despesa === null) {
+				continue
+			}
+
+			despesas.push(despesa)
+
+		}
+
+		return despesa
+	}
 }
 
 let bd = new Bd()
@@ -55,15 +78,15 @@ function cadastrarDespesa() {
 	let valor = document.getElementById('valor')
 
 	let despesa = new Despesa(
-		ano.value, 
-		mes.value, 
-		dia.value, 
-		tipo.value, 
+		ano.value,
+		mes.value,
+		dia.value,
+		tipo.value,
 		descricao.value,
 		valor.value
 	)
-	
-	if(despesa.validarDados()) {
+
+	if (despesa.validarDados()) {
 		bd.gravar(despesa)
 
 		//dialog de sucesso
@@ -74,18 +97,26 @@ function cadastrarDespesa() {
 		document.getElementById('modal_btn').className = 'btn btn-success'
 
 
-		$('#registroDespesa').modal('show') 
+		$('#registroDespesa').modal('show')
 
 	} else {
 
 		//dialog de erro
-				document.getElementById('modal_titulo').innerHTML = 'Preencha todos os campos'
-				document.getElementById('modal_div').className = 'modal-header text-danger'
-				document.getElementById('modal_conteudo').innerHTML = 'Erro'
-				document.getElementById('modal_btn').innerHTML = 'Voltar e corrigir'
-				document.getElementById('modal_btn').className = 'btn btn-danger'
+		document.getElementById('modal_titulo').innerHTML = 'Preencha todos os campos'
+		document.getElementById('modal_div').className = 'modal-header text-danger'
+		document.getElementById('modal_conteudo').innerHTML = 'Erro'
+		document.getElementById('modal_btn').innerHTML = 'Voltar e corrigir'
+		document.getElementById('modal_btn').className = 'btn btn-danger'
 
 
-		$('#registroDespesa').modal('show') 
+		$('#registroDespesa').modal('show')
 	}
+}
+
+function carregaListaDespesas() {
+
+	let despesas = array()
+
+	despesas = bd.recuperarTodosRegistros()
+
 }
