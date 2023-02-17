@@ -9,8 +9,8 @@ class Despesa {
 	}
 
 	validarDados() {
-		for (let i in this) {
-			if (this[i] == undefined || this[i] == '' || this[i] == null) {
+		for(let i in this) {
+			if(this[i] == undefined || this[i] == '' || this[i] == null) {
 				return false
 			}
 		}
@@ -23,7 +23,7 @@ class Bd {
 	constructor() {
 		let id = localStorage.getItem('id')
 
-		if (id === null) {
+		if(id === null) {
 			localStorage.setItem('id', 0)
 		}
 	}
@@ -43,25 +43,27 @@ class Bd {
 
 	recuperarTodosRegistros() {
 
-		//array despesa
-		let despesas = array()
+		//array de despesas
+		let despesas = Array()
 
 		let id = localStorage.getItem('id')
-		//recuperar todas despesas em LS
-		for (let i = 1; i <= id; i++) {
-			// recuperar despesas
+
+		//recuperar todas as despesas cadastradas em localStorage
+		for(let i = 1; i <= id; i++) {
+
+			//recuperar a despesa
 			let despesa = JSON.parse(localStorage.getItem(i))
 
-			//Pular indice removido
-			if (despesa === null) {
+			//existe a possibilidade de haver índices que foram pulados/removidos
+			//nestes casos nós vamos pular esses índices
+			if(despesa === null) {
 				continue
 			}
 
 			despesas.push(despesa)
-
 		}
 
-		return despesa
+		return despesas
 	}
 }
 
@@ -78,45 +80,86 @@ function cadastrarDespesa() {
 	let valor = document.getElementById('valor')
 
 	let despesa = new Despesa(
-		ano.value,
-		mes.value,
-		dia.value,
-		tipo.value,
+		ano.value, 
+		mes.value, 
+		dia.value, 
+		tipo.value, 
 		descricao.value,
 		valor.value
 	)
 
-	if (despesa.validarDados()) {
+
+	if(despesa.validarDados()) {
 		bd.gravar(despesa)
 
-		//dialog de sucesso
 		document.getElementById('modal_titulo').innerHTML = 'Registro inserido com sucesso'
-		document.getElementById('modal_div').className = 'modal-header text-success'
-		document.getElementById('modal_conteudo').innerHTML = 'Cadastrado com sucesso'
+		document.getElementById('modal_titulo_div').className = 'modal-header text-success'
+		document.getElementById('modal_conteudo').innerHTML = 'Despesa foi cadastrada com sucesso!'
 		document.getElementById('modal_btn').innerHTML = 'Voltar'
 		document.getElementById('modal_btn').className = 'btn btn-success'
 
-
-		$('#registroDespesa').modal('show')
+		//dialog de sucesso
+		$('#modalRegistraDespesa').modal('show') 
+		
 
 	} else {
-
-		//dialog de erro
-		document.getElementById('modal_titulo').innerHTML = 'Preencha todos os campos'
-		document.getElementById('modal_div').className = 'modal-header text-danger'
-		document.getElementById('modal_conteudo').innerHTML = 'Erro'
+		
+		document.getElementById('modal_titulo').innerHTML = 'Erro na inclusão do registro'
+		document.getElementById('modal_titulo_div').className = 'modal-header text-danger'
+		document.getElementById('modal_conteudo').innerHTML = 'Erro na gravação, verifique se todos os campos foram preenchidos corretamente!'
 		document.getElementById('modal_btn').innerHTML = 'Voltar e corrigir'
 		document.getElementById('modal_btn').className = 'btn btn-danger'
 
-
-		$('#registroDespesa').modal('show')
+		//dialog de erro
+		$('#modalRegistraDespesa').modal('show') 
 	}
 }
 
 function carregaListaDespesas() {
 
-	let despesas = array()
+	let despesas = Array()
 
-	despesas = bd.recuperarTodosRegistros()
+	despesas = bd.recuperarTodosRegistros() 
 
-}
+	/*
+
+	<tr>
+		<td>15/03/2018</td>
+		<td>Alimentação</td>
+		<td>Compras do mês</td>
+		<td>444.75</td>
+	</tr>
+
+	*/
+
+	let listaDespesas = document.getElementById("listaDespesas")
+
+	despesas.forEach(function(d){
+
+		//Criando a linha (tr)
+		var linha = listaDespesas.insertRow();
+
+		//Criando as colunas (td)
+		linha.insertCell(0).innerHTML = `${d.dia}/${d.mes}/${d.ano}` 
+
+		//Ajustar o tipo
+		switch(d.tipo){
+			case '1': d.tipo = 'Alimentação'
+				break
+			case '2': d.tipo = 'Educação'
+				break
+			case '3': d.tipo = 'Lazer'
+				break
+			case '4': d.tipo = 'Saúde'
+				break
+			case '5': d.tipo = 'Transporte'
+				break
+			
+		}
+		linha.insertCell(1).innerHTML = d.tipo
+		linha.insertCell(2).innerHTML = d.descricao
+		linha.insertCell(3).innerHTML = d.valor
+		console.log(d)
+	})
+
+ }
